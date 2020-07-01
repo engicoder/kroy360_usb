@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name kroy360_usb)(type KiCad)(uri ${KIPRJMOD}/kroy360_usb.pretty)(options "")(descr ""))
+)

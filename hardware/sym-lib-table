@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name kroy360_usb)(type Legacy)(uri ${KIPRJMOD}/kroy360_usb.lib)(options "")(descr ""))
+)
