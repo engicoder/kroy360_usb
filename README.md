@@ -13,7 +13,7 @@ current line is also displayed.
 
 The converter PCB connects to the display using the 10 pin header marked 
 "DISPLAY" and to the keyboard via a 20 pin ribbon cable connected to the header
-marked "KEYBOARD". The other end of the ribbon cable connects to teh 20 pin 
+marked "KEYBOARD". The other end of the ribbon cable connects to the 20 pin 
 header on the keyboard assembly. 
 
 ###  Pinouts
@@ -49,28 +49,29 @@ header on the keyboard assembly.
 ### Operation
 
 #### Data
-Data is received from the keyboard as a 7 bit scan code on data lines D0..D6. 
+Data is received from the keyboard as a 7 bit scan code on data lines *D0..D6*. 
 Each key position has a unique scan code. The up or down state of the key is set
-by the KS line with a high value indicating the down state and a low value 
-indicating the up state.  The P! line is pulled low by the keyboard when a key
+by the *KS* line with a high value indicating the down state and a low value 
+indicating the up state.  The *P1* line is pulled low by the keyboard when a key
 state change has been detected. The converter reads the data including key state
-and then pulls P2 low momentary (~20us) to release the keyboards data latch.
-If multiple keys are down, the KS line indicates the state of the last key change.
+and then pulls *P2* low momentary (~20us) to release the keyboards data latch.
+If multiple keys are down, the *KS* line indicates the state of the last key change.
 
-### Status LEDs
-The keyboard has 3 status LEDs on the following keys: Caps Lock, Type Specs and
-Edit Mode. Each LED has a dedicated line. Pulling the line low turns the LED on.
+#### Status LEDs
+The keyboard has 3 keys with integrated status LEDs; *Caps Lock*, *Type Specs* and
+*Edit Mode*. Each LED has a dedicated interface line. Pulling the line low turns 
+the LED on.
 
 #### Display
 The display is a Hitachi H2525 239x20 dot graphical lcd display. The display 
 does not have a dedicated controller. The rows and columns of the display are 
 driven by a chain of HD44104 shift registers. Data must be sent as a continuous,
-synchronous data stream using data line D and clock line CL2. The CL1 line 
-latches each 239 bit row of data. The FLM line indicates the beginning of a new 
-frame of data. Each frame is 20 rows of data. The M line is the polarity of the 
-LCD drive voltage. The M line should be toggled every frame or the intensity of 
-the pixels will fade. The display requires both a +5V (VDD) and -5V *(VEE) 
-supply. The VO line a bias voltage that changes the angle from which the pixels 
+synchronous data stream using data line *D* and clock line *CL2*. The *CL1* line 
+latches each 239 bit row of data. The *FLM* line indicates the beginning of a new 
+frame of data. Each frame is 20 rows of data. The *M* line is the polarity of the 
+LCD drive voltage. The *M* line should be toggled every frame or the intensity of 
+the pixels will fade. The display requires both a +5V (*VDD*) and -5V (*VEE*) 
+supply. The *VO* line a bias voltage that changes the angle from which the pixels 
 can be seen.
 
 ## Hardware
@@ -88,6 +89,7 @@ during start up and once when a key event is received.
 ## Firmware
 
 The firmware is written to use the QMK keyboard firmware framework. 
+https://github.com/qmk/qmk_firmware
 ### Build
 To build the firmware:
 
@@ -101,9 +103,10 @@ From the qmk_firmware root:
     $ make converter/kroy360_usb:default
 
 ### Features
+
 #### Password blanking
-A custom QMK keycode, "PWD_TOG" has been defined that can be assigned to any key.
-When pressed, this keycode will toggle the password blanking feature which 
-replaces the ascii characters for a given keystroke with an asterisk '*'. In the
-default keymap, "PWD_TOG" is assigned to the Type Specs key and the associated 
-LED will turn on when password blanking is active.
+A custom QMK keycode, **PWD_TOG**, has been defined that can be assigned to any key.
+When pressed, this keycode will toggle the password blanking feature. When active 
+password blanking replaces the ascii characters for a given keystroke with an 
+asterisk '*'. In the default keymap, **PWD_TOG** is assigned to the *Type Specs* 
+key and the integrated LED will turn on when password blanking is active.
