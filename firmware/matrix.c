@@ -28,15 +28,15 @@ IN THE SOFTWARE.
 #include "debug.h"
 #include "util.h"
 #include "matrix.h"
+#include "debounce.h"
 #include "kroy360_if.h"
 
 #ifndef DEBOUNCE
 #   define DEBOUNCE	0
 #endif
 
-static matrix_row_t matrix[MATRIX_ROWS];
-
-static uint8_t is_down[0x50] = {0};
+static matrix_row_t raw_matrix[MATRIX_ROWS];  // raw values
+static matrix_row_t matrix[MATRIX_ROWS];      // debounced values
 
 void matrix_make(uint8_t code);
 void matrix_break(uint8_t code);
@@ -53,17 +53,19 @@ uint8_t matrix_cols(void)
     return MATRIX_COLS;
 }
 
-void matrix_setup(void)
-{
-    kroy360_if_init();
-}
-
 void matrix_init(void)
 {
     debug_config.enable = true;
 
-    for (int r = 0; r < MATRIX_ROWS; r++)
+    for (int r = 0; r < MATRIX_ROWS; r++) {
+        raw_matrix[r] = 0;
         matrix[r] = 0;
+    }
+
+    kroy360_if_init();
+
+    debounce_init(MATRIX_ROWS);
+    matrix_init_quantum();  
 }
 
 
@@ -72,17 +74,24 @@ void matrix_init(void)
 
 uint8_t matrix_scan(void)
 {
+    bool changed = false;
+
     if(kroy360_if_has_data())
     {
+        changed = true;
         uint8_t data = kroy360_if_recv();
         uint8_t code = kroy360_if_scan_code(data);
         if (kroy360_if_pressed(data))
-            matrix_break(code);
-        else
             matrix_make(code);
+        else
+            matrix_break(code);
     }
 
-    return 1;
+    debounce(raw_matrix, matrix, MATRIX_ROWS, changed);
+
+    matrix_scan_quantum();    
+
+    return changed;
 }
 
 
@@ -92,11 +101,10 @@ void matrix_break(uint8_t code)
     uint8_t row;
     uint8_t col;
 
-    xprintf("break %X\n", code);
+    xprintf("break %02X\n", code);
     row = ROW(code);
     col = COL(code);
-    matrix[row] &= ~(1 << col);
-    is_down[code] = false;
+    raw_matrix[row] &= ~(1 << col);
 }
 
 void matrix_make(uint8_t code)
@@ -104,11 +112,10 @@ void matrix_make(uint8_t code)
     uint8_t row;
     uint8_t col;
 
-    xprintf("make %X\n", code);
+    xprintf("make %02X\n", code);
     row = ROW(code);
     col = COL(code);
-    matrix[row] |= 1 << col;
-    is_down[code] = true;
+    raw_matrix[row] |= 1 << col;
 }
 
 

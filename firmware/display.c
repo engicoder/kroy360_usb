@@ -29,6 +29,8 @@ const uint8_t special[][8] PROGMEM =
     {0x20,0x50,0xA8,0x20,0x20,0x20,0x00,0x00}, /* Up Arrow */
 };
 
+const uint8_t start_msg[] = "KROY 360";
+
 #define PBUF_SIZE 32
 static uint8_t pbuf[PBUF_SIZE];
 /*
@@ -85,6 +87,8 @@ static uint8_t pbuf_peek_n(uint8_t n)
 uint8_t map_usb_hid(uint8_t hid_code, bool shift)
 {
     uint8_t ascii = 0x00;
+
+
     if (hid_code >= 0x04 && hid_code <= 0x1D) /* A through Z */
     {
         ascii = (hid_code - 0x04) + 0x41;
@@ -186,6 +190,13 @@ void display_init(void)
 {
     h2525_init();
     h2525_start();
+    const uint8_t * p = start_msg;
+    while (*p != 0) {
+        pbuf_add_rear(*p);
+        p++;
+    };
+    update_alpha();
+
 }
 
 void display_clear(void)
@@ -196,13 +207,19 @@ void display_clear(void)
 void display_toggle_pwd_blanking(void)
 {
     pwd_blanking_on = !pwd_blanking_on;
-
 }
 
 
 void display_on_hid_code(uint8_t hid_code)
 {
     uint8_t ascii = 0;
+
+    static bool start_clr = false;
+
+    if (!start_clr) {
+        start_clr = true;
+        pbuf_clear();
+    }
 
     if (pwd_blanking_on) {
         if (hid_code == KEY_ENTER)

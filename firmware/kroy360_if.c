@@ -63,12 +63,13 @@ static inline void kb_en_disable(void)
 
 static inline void ps1_init(void)
 {
-    PS1_DDR &=  ~(1 << PS1_PIN);
+    PS1_PORT |= (1 << PS1_PIN);
+    PS1_DDR &= ~(1 << PS1_PIN);
 
     /* Disable interrupt via mask register */
     EIMSK &= ~(1 << INT0);
 
-    /* Set INT0 to trigger on falling edge */
+    /* Set INT1 to trigger on falling edge */
     EICRA &= ~((1 << ISC01) | (1 << ISC00));
     EICRA |= ((1 << ISC01) | (0 << ISC00));
 
@@ -102,19 +103,17 @@ static inline void ps2_low(void)
 {
     PS2_PORT &= ~(1 << PS2_PIN);
 }
-
-static inline void ps2_high(void)
-{
-    PS2_PORT |= (1 << PS2_PIN);
-}
-
-
 #define TIMER_INT TIMER3_COMPB_vect
 
 #define BAUD_RATE 2400
 #define TIMER_PRESCALER 8
 #define TIMER_CLOCK F_CPU/TIMER_PRESCALER
 #define TIMER_PERIOD 832
+
+static inline void ps2_high(void)
+{
+    PS2_PORT |= (1 << PS2_PIN);
+}
 
 
 static inline void led_init(void)
@@ -226,7 +225,6 @@ void kroy360_if_init(void)
     _delay_ms(250);
     led_off(KROY360_LED_ALL);
     ps1_int_enable();
-    xprintf("Kroy 360 started\n");
 }
 
 
@@ -238,7 +236,6 @@ uint8_t kroy360_if_recv(void)
     {
         led_on(KROY360_LED_ST);
         data = pbuf_dequeue();
-        xprintf("--> %X\n", data);
         led_off(KROY360_LED_ST);
     }
 

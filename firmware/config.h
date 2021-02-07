@@ -10,9 +10,9 @@ Copyright 2019 engicoder
 #define VENDOR_ID       0xFEED
 #define PRODUCT_ID      0x6060
 #define DEVICE_VER      0x0001
-#define MANUFACTURER    Anachronic Devices
-#define PRODUCT         Kroy 360
-#define DESCRIPTION     Kroy 360 keyboard converter
+#define MANUFACTURER    Kroy
+#define PRODUCT         360
+#define DESCRIPTION     Kory 360 converter
 
 /* key matrix size */
 #define MATRIX_ROWS 5
@@ -20,11 +20,13 @@ Copyright 2019 engicoder
 
 #define USB_MAX_POWER_CONSUMPTION 500
 
+
+
 /* define if matrix has ghost */
-//#define MATRIX_HAS_GHOST
+#define MATRIX_HAS_GHOST
 
 /* Set 0 if debouncing isn't needed */
-//#define DEBOUNCE    0
+#define DEBOUNCE    10
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 //#define LOCKING_SUPPORT_ENABLE
@@ -37,7 +39,6 @@ Copyright 2019 engicoder
     keyboard_report->mods == (MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT)) \
 )
 */
-
 
 
 #endif

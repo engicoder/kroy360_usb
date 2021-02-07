@@ -16,8 +16,7 @@
 #define TSLED_PIN   PF4
 #define EMLED_PIN   PF5
 #define STLED_PIN   PF7
-#define LED_BITS    ((1 << CLLED_PIN) | (1 << TSLED_PIN) | \
-                     (1 << EMLED_PIN) | (1 << STLED_PIN))
+#define LED_BITS    ((1 << CLLED_PIN) | (1 << TSLED_PIN) | (1 << EMLED_PIN) | (1 << STLED_PIN))
 
 
 #define PS2_PIN     PF6
